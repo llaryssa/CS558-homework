@@ -77,6 +77,7 @@ sky_mask = double(sky_mask);
 
 sky = [];
 non_sky = [];
+sky_color = [];
 sky_color(1,1,1) = 254;
 sky_color(1,1,2) = 0;
 sky_color(1,1,3) = 0;
@@ -98,5 +99,29 @@ end
 k = 10;
 [~,skywords] = kmeans(sky, k, 'EmptyAction', 'singleton');
 [~,nonskywords] = kmeans(non_sky, k, 'EmptyAction', 'singleton');
+% words :: [label r g b]
+words = [ones(k,1) skywords; zeros(k,1) nonskywords];
 
 
+% testing
+for tt = 1:4
+    test_image = imread([folder_path2 'sky_test' num2str(tt) '.jpg']);
+    [s1,s2,s3] = size(test_image);
+    % making it a s1*s2-by-s3 matrix
+    test_pixels = double(reshape(test_image,s1*s2,s3,1));
+
+    % search for the closest word
+    idx = knnsearch(words(:,2:end),test_pixels,'k',1,'Distance','euclidean');
+    test_estimate = words(idx,1);
+    
+    % getting 2D indices for pixel vector
+    [xx,yy] = ind2sub([s1 s2],1:s1*s2);
+
+    for i = 1:s1*s2
+        % if the pixel was classified as sky, we paint it
+        if test_estimate(i) == 1
+            test_image(xx(i),yy(i),:) = sky_color;
+        end
+    end
+    figure('Name', ['sky_test' num2str(tt)]), imshow(test_image);
+end
