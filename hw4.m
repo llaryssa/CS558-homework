@@ -8,46 +8,26 @@ train_data = zeros(12,bins*3);
 test_label = zeros(12,1);
 test_data = zeros(12,bins*3);
 
+classes_filenames = {'coast', 'forest', 'insidecity'};
+cnt = 1;
+
 for i = 1:4
-    % prepare training data
-    im1 = imread([folder_path1 'coast_train' num2str(i) '.jpg']);
-    im2 = imread([folder_path1 'forest_train' num2str(i) '.jpg']);
-    im3 = imread([folder_path1 'insidecity_train' num2str(i) '.jpg']);
+    for c = 1:length(classes_filenames)
+        % prepare train data
+        im_train = imread([folder_path1 classes_filenames{c} '_train' num2str(i) '.jpg']);
+        train_label(cnt) = c;
+        train_data(cnt,:) = [make_histogram(im_train(:,:,1),bins) ...
+                             make_histogram(im_train(:,:,2),bins) ...
+                             make_histogram(im_train(:,:,3),bins)];
     
-    train_label(i) = 1;
-    train_data(i,:) = [make_histogram(im1(:,:,1),bins) ...
-                     make_histogram(im1(:,:,2),bins) ...
-                     make_histogram(im1(:,:,3),bins)];
-    
-    train_label(4+i) = 2;
-    train_data(4+i,:) = [make_histogram(im2(:,:,1),bins) ...
-                     make_histogram(im2(:,:,2),bins) ...
-                     make_histogram(im2(:,:,3),bins)];
-                 
-    train_label(8+i) = 3;
-    train_data(8+i,:) = [make_histogram(im3(:,:,1),bins) ...
-                     make_histogram(im3(:,:,2),bins) ...
-                     make_histogram(im3(:,:,3),bins)];  
-    
-    % prepare testing data
-    im4 = imread([folder_path1 'coast_test' num2str(i) '.jpg']);
-    im5 = imread([folder_path1 'forest_test' num2str(i) '.jpg']);
-    im6 = imread([folder_path1 'insidecity_test' num2str(i) '.jpg']);
-     
-    test_label(i) = 1;
-    test_data(i,:) = [make_histogram(im4(:,:,1),bins) ...
-                     make_histogram(im4(:,:,2),bins) ...
-                     make_histogram(im4(:,:,3),bins)];
-    
-    test_label(4+i) = 2;
-    test_data(4+i,:) = [make_histogram(im5(:,:,1),bins) ...
-                     make_histogram(im5(:,:,2),bins) ...
-                     make_histogram(im5(:,:,3),bins)];
-    
-    test_label(8+i) = 3;
-    test_data(8+i,:) = [make_histogram(im6(:,:,1),bins) ...
-                     make_histogram(im6(:,:,2),bins) ...
-                     make_histogram(im6(:,:,3),bins)];     
+        % prepare test data
+        im_test = imread([folder_path1 classes_filenames{c} '_test' num2str(i) '.jpg']);              
+        test_label(cnt) = c;
+        test_data(cnt,:) = [make_histogram(im_test(:,:,1),bins) ...
+                            make_histogram(im_test(:,:,2),bins) ...
+                            make_histogram(im_test(:,:,3),bins)];
+        cnt = cnt + 1;
+    end   
 end
 
 % testing
@@ -63,7 +43,6 @@ for i = 1:size(test_data,1)
 end
 
 disp(['Accuracy: ' num2str(correct*100/size(test_data,1)) '%'])
-
 
 %% SECOND PROBLEM
 
