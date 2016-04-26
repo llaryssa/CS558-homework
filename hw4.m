@@ -1,3 +1,5 @@
+clear all; close all;
+
 folder_path1 = 'cs558s16_hw4/ImClass/';
 folder_path2 = 'cs558s16_hw4/sky/';
 
@@ -102,5 +104,7 @@ for tt = 1:4
             test_image(xx(i),yy(i),:) = sky_color;
         end
     end
-    figure('Name', ['sky_test' num2str(tt)]), imshow(test_image);
+    figure('Name', ['sky_test' num2str(tt)]);
+    imshow(test_image);
+    % imwrite(test_image, ['hw4latex/imgs/sky' num2str(tt) '.png']);
 end
